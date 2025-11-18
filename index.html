@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi Minh Trí</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:ital,wght@0,400;1,400&family=Special+Elite&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:ital,wght@0,400;1,400&family=Special+Elite&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
         /* --- CÀI ĐẶT CHUNG --- */
@@ -18,7 +18,20 @@
             overflow-x: hidden;
         }
 
-        /* --- MÀN HÌNH CHỜ (PHONG BÌ) --- */
+        /* --- HIỆU ỨNG FILM GRAIN (NHIỄU HẠT) --- */
+        .film-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.05;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+        }
+
+        /* --- MÀN HÌNH CHỜ --- */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -40,315 +53,174 @@
             height: 200px;
             background-color: #d4c5b0;
             position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             transition: transform 0.3s ease;
         }
-        .envelope:hover {
-            transform: scale(1.05);
-        }
+        .envelope:hover { transform: scale(1.05) rotate(1deg); }
         .envelope:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
+            content: ''; position: absolute; top: 0; left: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
             border-top: 110px solid #e0d3c1;
         }
         .envelope:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            border-left: 150px solid #d4c5b0;
-            border-right: 150px solid #d4c5b0;
-            border-bottom: 100px solid #cbbba4;
-            border-top: 100px solid transparent;
+            content: ''; position: absolute; bottom: 0; left: 0;
+            border-left: 150px solid #d4c5b0; border-right: 150px solid #d4c5b0;
+            border-bottom: 100px solid #cbbba4; border-top: 100px solid transparent;
         }
         .stamp {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-family: 'Special Elite', cursive;
-            color: #8b0000;
-            font-size: 14px;
-            z-index: 10;
-            text-align: center;
-            pointer-events: none;
-            background: rgba(255,255,255,0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px dashed #8b0000;
+            font-family: 'Special Elite', cursive; color: #8b0000;
+            font-size: 14px; z-index: 10; text-align: center; pointer-events: none;
+            background: rgba(255,255,255,0.8); padding: 8px 15px;
+            border-radius: 3px; border: 1px dashed #8b0000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         /* --- NỘI DUNG CHÍNH --- */
         #main-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            opacity: 0;
-            transform: translateY(50px);
+            max-width: 800px; margin: 0 auto; padding: 40px 20px;
+            opacity: 0; transform: translateY(50px);
             transition: opacity 2s ease, transform 2s ease;
         }
+        .content-visible { opacity: 1 !important; transform: translateY(0) !important; }
 
-        .content-visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-
-        /* --- PHẦN LỊCH --- */
-        .calendar-section {
-            text-align: center;
-            margin-bottom: 50px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .reminder-text {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
+        /* --- LỊCH & TIMER --- */
+        .calendar-section { text-align: center; margin-bottom: 40px; font-family: 'Montserrat', sans-serif; }
+        .reminder-text { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 5px; }
         .script-text {
-            font-family: 'Dancing Script', cursive;
-            color: #d63447;
-            font-size: 2.5rem;
-            margin: 10px 0;
-            transform: rotate(-3deg);
+            font-family: 'Dancing Script', cursive; color: #d63447;
+            font-size: 3rem; margin: 10px 0; transform: rotate(-3deg);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
         }
-
-        .date-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
+        .date-row { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 20px 0; }
         .date-box {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #bbb;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1rem;
-            color: #888;
-            background: rgba(255,255,255,0.6);
+            width: 35px; height: 35px; border: 1px solid #ccc; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.9rem; color: #999; background: rgba(255,255,255,0.5);
         }
-
         .date-box.active {
-            width: 55px;
-            height: 50px;
-            border: none; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 88.9L16.7 55.6C7.2 46.1 7.2 30.9 16.7 21.4s24.7-9.5 33.3 0l0 0 33.3-9.5c8.6-9.5 23.8-9.5 33.3 0s9.5 24.7 0 34.2L50 88.9z' fill='none' stroke='%23d63447' stroke-width='3'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            padding-bottom: 5px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #333;
+            width: 50px; height: 50px; border: 2px solid #d63447;
+            background: #fff; color: #d63447; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(214, 52, 71, 0.2);
         }
 
-        /* Typography Thư */
+        /* Timer Style */
+        .love-timer {
+            font-family: 'Montserrat', sans-serif; margin-top: 25px;
+            padding: 15px 25px; background: #fff;
+            border-radius: 50px; display: inline-block;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        .timer-display { font-size: 1.1rem; font-weight: 700; color: #d63447; letter-spacing: 1px; }
+
+        /* --- GALLERY BĂNG DÍNH (TAPE) --- */
+        .gallery-container {
+            display: flex; overflow-x: auto; gap: 20px; padding: 30px 10px;
+            margin: 20px -20px; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .gallery-container::-webkit-scrollbar { display: none; }
+        
+        .photo-card {
+            flex: 0 0 240px; scroll-snap-align: center;
+            background: white; padding: 10px 10px 35px 10px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            transform: rotate(var(--r)); position: relative;
+            border: 1px solid #f0f0f0;
+        }
+        /* Hiệu ứng băng dính */
+        .photo-card::before {
+            content: ''; position: absolute; top: -15px; left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 80px; height: 25px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(200, 200, 200, 0.2);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            backdrop-filter: blur(2px); z-index: 5;
+        }
+        .photo-card img {
+            width: 100%; height: 280px; object-fit: cover;
+            filter: sepia(15%) contrast(1.1); display: block;
+        }
+
+        /* Typography */
         h1 {
-            font-family: 'Dancing Script', cursive;
-            color: #8b3a3a;
-            font-size: 3.5rem;
-            text-align: center;
-            margin: 30px 0 10px 0;
-            line-height: 1.2;
+            font-family: 'Dancing Script', cursive; color: #8b3a3a;
+            font-size: 3.5rem; text-align: center; margin: 30px 0 10px 0;
+            line-height: 1.1; text-shadow: 3px 3px 0px rgba(0,0,0,0.05);
         }
-        
-        .letter-body {
-            font-size: 1.15rem;
-            line-height: 1.8;
-            text-align: justify;
-            color: #5a4a42;
-        }
-        
-        .letter-body p {
-            margin-bottom: 20px;
-            text-indent: 30px;
-        }
-
+        .letter-body { font-size: 1.1rem; line-height: 1.9; text-align: justify; color: #555; }
+        .letter-body p { margin-bottom: 20px; text-indent: 30px; }
         .highlight-text {
-            color: #8b3a3a;
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
-            text-align: center;
-            display: block;
-            margin: 30px 0;
-            text-indent: 0 !important;
+            color: #d63447; font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem; text-align: center; display: block;
+            margin: 40px 0; text-indent: 0 !important;
+            transform: rotate(-1deg);
         }
 
-        /* Khung ảnh trong thư */
-        .photo-frame {
-            float: right;
-            margin-left: 25px;
-            margin-bottom: 15px;
-            padding: 12px;
-            background: white;
-            box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
-            transform: rotate(4deg);
-            width: 220px;
-            transition: transform 0.3s;
-        }
-        .photo-frame:hover {
-            transform: rotate(0deg) scale(1.05);
-        }
-        .photo-frame img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* --- IPOD DECORATION (NO PLAY BUTTON) --- */
+        /* --- IPOD XỊN --- */
         .ipod-player-section {
-            text-align: center;
-            margin-top: 80px;
-            padding: 40px 20px;
-            background-color: #fff9f6;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #ffebeb;
+            text-align: center; margin-top: 80px; padding: 40px 20px;
+            background: linear-gradient(135deg, #fff9f6 0%, #fff0f0 100%);
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(214, 52, 71, 0.1);
+            position: relative; overflow: hidden; border: 1px solid #ffebeb;
         }
-
-        .ipod-player-section h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            color: #d63447;
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
-        }
-
         .ipod-container {
-            width: 300px; /* Thu nhỏ lại xíu cho xinh */
-            height: 450px; /* Dáng đứng */
-            background-color: #f7d7dc;
-            border-radius: 30px;
-            margin: 0 auto 30px auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column; /* Dáng đứng */
-            align-items: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
+            width: 280px; height: 420px; background: #ffcdd2;
+            border-radius: 25px; margin: 0 auto 30px auto; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.05), 5px 5px 15px rgba(0,0,0,0.1);
         }
-
         .ipod-screen {
-            width: 260px;
-            height: 200px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border: 2px solid #333;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+            width: 240px; height: 180px; background: #333;
+            border-radius: 8px; margin-bottom: 40px;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            position: relative; border: 4px solid #444;
         }
-        .ipod-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-        }
+        .ipod-screen img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
         
-        /* Thanh trạng thái giả trên màn hình */
-        .status-bar {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 20px;
-            background: rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            padding: 0 5px;
-            box-sizing: border-box;
-            font-size: 10px;
-            align-items: center;
-            font-family: sans-serif;
-        }
-
         .ipod-wheel {
-            width: 180px;
-            height: 180px;
-            background-color: #fff;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            width: 160px; height: 160px; background: #fff;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+        /* Animation xoay khi phát nhạc */
+        .spin-animation { animation: spin 5s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .ipod-center-button {
-            width: 60px;
-            height: 60px;
-            background-color: #ddd;
-            border-radius: 50%;
-        }
-
+        .ipod-center-button { width: 50px; height: 50px; background: #eee; border-radius: 50%; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
         .ipod-control-label {
-            position: absolute;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
-            color: #aaa;
-            font-weight: bold;
+            position: absolute; font-family: sans-serif; font-size: 0.7rem;
+            color: #bbb; font-weight: bold;
         }
-        .menu-btn { top: 20px; }
-        .play-btn { bottom: 20px; font-size: 1.2rem; } /* Chỉ để icon, không bấm được */
-        .prev-btn { left: 20px; font-size: 1.2rem; }
-        .next-btn { right: 20px; font-size: 1.2rem; }
+        .menu-btn { top: 15px; } .play-btn { bottom: 15px; font-size: 1rem; }
+        .prev-btn { left: 15px; font-size: 1rem; } .next-btn { right: 15px; font-size: 1rem; }
 
-        .ipod-ribbon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d63447' d='M9.23 3.5c-.75-.68-1.92-.68-2.67 0L2.87 7.19a2 2 0 00-.5 1.5l.09 5.86c0 .87.71 1.58 1.58 1.58h.56l-.01 5.09c0 .24.19.43.43.43h1.83c.24 0 .43-.19.43-.43v-5.09h1.76l-.01 5.09c0 .24.19.43.43.43h1.83c.24 0 .43-.19.43-.43v-5.09h.56c.87 0 1.58-.71 1.58-1.58l.09-5.86a2 2 0 00-.5-1.5z' transform='rotate(45 12 12)'/%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-            transform: rotate(30deg);
+        /* Heart Rain */
+        .heart-fall {
+            position: fixed; top: -10%; color: #d63447; opacity: 0.8; z-index: 999;
+            animation: fall linear forwards; pointer-events: none; user-select: none;
         }
+        @keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-        .player-quote {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.1rem;
-            color: #5a4a42;
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-        
-        /* Responsive */
+        /* Mobile Fix */
         @media (max-width: 600px) {
-            .ipod-container { width: 260px; height: 400px; }
-            .ipod-screen { width: 220px; height: 160px; }
-            .ipod-wheel { width: 150px; height: 150px; }
+            .gallery-container { padding-left: 20px; }
+            h1 { font-size: 2.8rem; }
         }
-
     </style>
 </head>
 <body>
+
+    <div class="film-grain"></div>
 
     <div id="intro-screen" onclick="openLetter()">
         <div class="envelope">
             <div class="stamp">
                 GỬI MINH TRÍ<br>
-                (Nhấn để mở)
+                (Chạm để mở)
             </div>
         </div>
     </div>
@@ -356,29 +228,53 @@
     <main id="main-content">
         
         <div class="calendar-section">
-            <div class="reminder-text">It's your reminder to</div>
-            <div class="script-text">Love me</div>
+            <div class="reminder-text">It's a reminder to</div>
+            <div class="script-text">Love me forever</div>
             <div class="date-row" id="date-row"></div>
-            <div class="script-text" style="margin-top: 15px;">Forever</div>
-            <div class="reminder-text">Happy 2 Months Anniversary</div>
+            
+            <div class="love-timer">
+                <div id="timer-display" class="timer-display">Loading...</div>
+            </div>
+
+            <div class="reminder-text" style="margin-top: 15px;">Happy 2 Months Anniversary</div>
         </div>
 
-        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 30px 50px;">
+        <hr style="border: 0; border-top: 1px dashed #d63447; margin: 30px 60px; opacity: 0.3;">
 
         <h1>Nobody loves you<br>more than me</h1>
         
-        <div style="text-align:center; color: #8b3a3a; margin: 20px 0; font-size: 20px;">❦</div>
+        <div style="text-align:center; color: #8b3a3a; margin: 15px 0; font-size: 18px;">❦</div>
 
         <div class="letter-body">
-            <div class="photo-frame">
-                <img src="yeuminhtri.jpg" alt="Chúng mình" onerror="this.src='https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300&auto=format&fit=crop'">
+            
+            <div class="gallery-container">
+                <div class="photo-card" style="--r: -3deg;">
+                    <img src="yeuminhtri.jpg" alt="Ảnh 1" onerror="this.src='https://images.unsplash.com/photo-1516575150278-77136aed6920?q=80&w=300'">
+                </div>
+                <div class="photo-card" style="--r: 2deg;">
+                    <img src="minhtri.jpg" alt="Ảnh 2" onerror="this.src='https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=300'">
+                </div>
+                <div class="photo-card" style="--r: -2deg;">
+                    <img src="minhtri2.jpg" alt="Ảnh 3" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300'">
+                </div>
+                 <div class="photo-card" style="--r: 3deg;">
+                    <img src="minhtri3.jpg" alt="Ảnh 4" onerror="this.src='https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300'">
+                </div>
+                 <div class="photo-card" style="--r: -1deg;">
+                    <img src="yeuminhtri.jpg" alt="Ảnh 5" onerror="this.src='https://images.unsplash.com/photo-1516575150278-77136aed6920?q=80&w=300'">
+                </div>
+                 <div class="photo-card" style="--r: 4deg;">
+                    <img src="minhtri.jpg" alt="Ảnh 6" onerror="this.src='https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=300'">
+                </div>
             </div>
 
             <p><strong>Gửi Minh Trí yêu dấu của em !!!</strong></p>
 
             <p>Đã hai tháng trời trôi qua, cũng là hai tháng anh chịu đựng tính ương bướng và bất đồng của em ớ. Chúc mừng anh đã vượt qua những tính cách khó bảo đó để cùng em đồng hành đến ngày hôm nayy.</p>
 
-            <p>Hai tháng là một quãng thời gian không ngắn, cũng không dài. Tụi mình đã cùng đi qua rất nhiều kỉ niệm: những lúc đi học cùng nhau, đùa giỡn khắp đường về nhà; những lần hiểu lầm nhau, buồn và dỗi nhauu; những lần hai đứa cố gắng để an ủi, quan tâm đối phương... Em vẫn còn nhớ rõ lần đầu gặp anh, ấn tượng và cả anh của lúc đó nữa. Lúc mới gặp cũng chẳng nghĩ mình sẽ đi đến đây đâu, anh nhỉ? Cảm giác mọi thứ vừa trôi qua nhanh, vừa chậm nữa. Em thật ra không muốn thời gian trôi nhanh những lúc bên cạnh anh đâu. Bên cạnh anh lúc nào em cũng yên bình và hạnh phúc hết trơn á.</p>
+            <p>Hai tháng là một quãng thời gian không ngắn, cũng không dài. Tụi mình đã cùng đi qua rất nhiều kỉ niệm: những lúc đi học cùng nhau, đùa giỡn khắp đường về nhà; những lần hiểu lầm nhau, buồn và dỗi nhauu; những lần hai đứa cố gắng để an ủi, quan tâm đối phương... Em vẫn còn nhớ rõ lần đầu gặp anh, ấn tượng và cả anh của lúc đó nữa.</p> 
+            
+            <p>Lúc mới gặp cũng chẳng nghĩ mình sẽ đi đến đây đâu, anh nhỉ? Cảm giác mọi thứ vừa trôi qua nhanh, vừa chậm nữa. Em thật ra không muốn thời gian trôi nhanh những lúc bên cạnh anh đâu. Bên cạnh anh lúc nào em cũng yên bình và hạnh phúc hết trơn á.</p>
 
             <p>Lúc trước, em nhớ có những đêm em đau đến cùng cực. Mắt sưng, gối ướt, cố thở để tim còn có thể đập. Em đều suy nghĩ sao em lại phải một mình chịu đựng cái này. Nhiều lúc em mong có người có thể bên em, nhưng khi xung quanh em có nhiều người đến, em chưa bao giờ thật sự thấy hay có linh cảm tốt với ai cả. Em đã nhiều lần cầu nguyện với vũ trụ rằng hãy mang "anh" tới cho em. Và vũ trụ thật sự đã lắng nghe em, và cho em gặp anh á.</p>
 
@@ -392,9 +288,9 @@
             </span>
         </div>
 
-        <hr style="border: 0; border-top: 1px dashed #8b3a3a; margin: 40px 0;">
+        <hr style="border: 0; border-top: 1px dashed #d63447; margin: 40px 0; opacity: 0.5;">
         
-        <div style="text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #8b3a3a;">
+        <div style="text-align: center; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; color: #8b3a3a;">
             Always yours,<br>
             (Em bé của anh)
         </div>
@@ -403,26 +299,20 @@
             <h3>Our Memories, Our Melody</h3>
             <div class="ipod-container">
                 <div class="ipod-screen">
-                    <div class="status-bar">
-                        <span>9:41 AM</span>
-                        <span>Now Playing</span>
-                        <span>🔋</span>
-                    </div>
-                    <img src="minhtri.jpg" alt="Our Picture" onerror="this.src='https://images.unsplash.com/photo-1542104593-be76f7f2b184?q=80&w=300&auto=format&fit=crop'">
+                    <img src="minhtri3.jpg" alt="Cover" onerror="this.src='https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?q=80&w=300'">
                 </div>
                 
-                <div class="ipod-wheel">
+                <div class="ipod-wheel" id="vinyl-wheel">
                     <span class="ipod-control-label menu-btn">MENU</span>
                     <span class="ipod-control-label prev-btn">«</span>
                     <span class="ipod-control-label next-btn">»</span>
-                    <span class="ipod-control-label play-btn">▶︎ ||</span>
+                    <span class="ipod-control-label play-btn">▶ ||</span>
                     <div class="ipod-center-button"></div>
                 </div>
-                <div class="ipod-ribbon"></div>
             </div>
-            <p class="player-quote">
-                "There are three things in this world that will always remain a <br>
-                constant: the sun will rise, the wind will blow, and i will love you."
+            <p style="font-family: 'Playfair Display'; font-style: italic; color: #666;">
+                "There are three things in this world that will always remain a constant:<br> 
+                the sun will rise, the wind will blow, and i will love you."
             </p>
             
             <audio id="background-music" loop>
@@ -433,30 +323,64 @@
     </main>
 
     <script>
-        // 1. Xử lý mở thư + PHÁT NHẠC NGAY LẬP TỨC
+        /* --- CẤU HÌNH NGÀY YÊU (QUAN TRỌNG !!!) --- */
+        // Để hiển thị đúng 2 tháng, mình đã set ngày mặc định là ngày 18/09/2024 (Nếu hiện tại là tháng 11)
+        // LƯU Ý: Tháng trong JS tính từ 0. 
+        // Tháng 1 = 0, Tháng 2 = 1 ... Tháng 9 = 8, Tháng 11 = 10.
+        
+        // Nếu bạn yêu nhau ngày 18/09/2024 thì giữ nguyên số 8.
+        const startDate = new Date(2025, 8, 18); 
+
+        /* ------------------------------------------------ */
+
         function openLetter() {
             const introScreen = document.getElementById('intro-screen');
             const music = document.getElementById('background-music');
+            const wheel = document.getElementById('vinyl-wheel');
             
-            // Phát nhạc ngay khi click
-            music.play().catch(error => {
-                console.log("Trình duyệt chặn tự động phát, cần tương tác thêm: ", error);
+            // Phát nhạc + Xoay đĩa
+            music.play().then(() => {
+                wheel.classList.add('spin-animation'); // Thêm hiệu ứng xoay khi nhạc phát
+            }).catch(error => {
+                console.log("Chưa tương tác, nhạc chưa phát");
             });
 
-            // Hiệu ứng mờ
+            // Mưa tim (Rơi dồn dập lúc đầu cho đẹp)
+            setInterval(createHeart, 200); 
+
             introScreen.style.opacity = '0';
             introScreen.style.pointerEvents = 'none';
 
             setTimeout(() => {
-                const content = document.getElementById('main-content');
-                content.classList.add('content-visible');
-                setTimeout(() => {
-                    introScreen.style.display = 'none';
-                }, 1000);
+                document.getElementById('main-content').classList.add('content-visible');
+                setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
             }, 800);
         }
 
-        // 2. Xử lý Lịch
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-fall');
+            heart.innerHTML = '❤'; 
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('timer-display').innerText = 
+                `${days} Days : ${hours} Hrs : ${minutes} Mins : ${seconds} Secs`;
+        }
+
         function setupCalendar() {
             const dateRow = document.getElementById('date-row');
             const today = new Date();
@@ -471,7 +395,10 @@
             }
         }
 
-        window.onload = setupCalendar;
+        window.onload = () => {
+            setupCalendar();
+            setInterval(updateTimer, 1000);
+        };
     </script>
 </body>
 </html>
